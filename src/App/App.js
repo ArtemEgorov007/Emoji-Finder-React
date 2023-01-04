@@ -8,29 +8,38 @@ import { Footer } from "../components/Footer";
 import { Pagination } from "../components/Pagination";
 import { Select } from "../components/Select";
 import { useState } from "react";
-function App() {
-	const [value, setValue] = useState("");
-	const [page, setPage] = useState(1);
-	const [select, setSelect] = useState(12);
+import { getUnicData } from "../utils/getUnicData"; // отдельная функиция сортировки и отрисовки 
 
-	let sortArr = data.filter(
+function App() {
+	// эмоджи по фильтру
+	const [value, setValue] = useState("");
+	//текущая страничка
+	const [page, setPage] = useState(1);
+	//количество эмоджи на странице
+	const [select, setSelect] = useState(12);
+	// поиск 
+	const unicData = getUnicData(data);
+	//получение данных, сортировка
+	let sortArr = unicData.filter(
 		({ title, keywords }) =>
 			!value ||
 			title.toLowerCase().includes(value) ||
 			keywords.toLowerCase().includes(value)
 	);
-
+	// количество страниц
 	let perPage = Math.ceil(sortArr.length / select);
+	// индекс последней эмоджи
 	let lastElem = page * select;
+	//эмоджи первой на странице
 	let firstElem = page * select - select;
+	// количество сраниц
 	let test = sortArr.slice(firstElem, lastElem);
 	function getSelect(e) {
 		setSelect(e.target.value);
 	}
-
+	// переменные для хранения крайних номеров для страницы пагинации
 	let startPage = 0;
 	let endPage = perPage;
-
 	if (page === 1 || page === 2) {
 		startPage = 0;
 		endPage = 5;
@@ -45,6 +54,7 @@ function App() {
 		startPage = page - 3;
 		endPage = page + 2;
 	}
+
 	return (
 		<>
 			<Header>
@@ -57,9 +67,7 @@ function App() {
 							key={title}
 							title={title}
 							symbol={symbol}
-							keywords={[...new Set(keywords.split(" "))].join(
-								","
-							)}
+							keywords={keywords}
 						/>
 					))}
 				</Container>
